@@ -18,12 +18,16 @@ def read_yaml(input, filename):
     return output[input]
 
 def read_data_csv(filename):
-    values = ""
+    values = []
+    wrong_values = []
     with open(filename, 'r') as file:
         csvreader = csv.reader(file)
         for row in csvreader:
-            values = values + str(row).replace("[","(").replace("]",")").replace('"',"/'") + ","
-    return values[:-1]
+            if '' in row:
+                wrong_values.append(tuple([filename, str(row)]))
+            else:
+                values.append(tuple(row))
+    return [values,wrong_values]
 
 @app.route('/', methods=['GET'])
 def index():
@@ -42,8 +46,10 @@ def load():
         # creating the table if not exist
         table_layout = read_yaml(file, "data_layout/layout")
         create_table_statement = 'create table if not exists ' + table + ' ' + table_layout
+        create_table_statement_wrong_data = 'create table if not exists error_logs (table_affected VARCHAR(50), query VARCHAR(200))'
 
         mycursor.execute(create_table_statement)
+        mycursor.execute(create_table_statement_wrong_data)
 
         # inserting the data into db
 
@@ -52,16 +58,15 @@ def load():
 
         table_insert_fields = read_yaml(file + "_insert", "data_layout/layout")
 
-        insert_table_statement = 'insert into db.' + table + ' ' + table_insert_fields + ' values ' + insert_values + ';'
+        insert_table_statement = 'insert into db.' + table + ' ' + table_insert_fields
+        insert_table_statement_wrong_data = 'insert into db.error_logs' + ' ' +  '(table_affected, query) values (%s, %s)'
 
-        #mycursor.execute(str(insert_table_statement))
-        #connection.commit() 
+        mycursor.executemany(insert_table_statement, insert_values[0])
+        mycursor.executemany(insert_table_statement_wrong_data, insert_values[1])
 
-
-
-
+        connection.commit()
         
-        return insert_table_statement
+        return "operation done"
     else:
         return "Arguments 'table' and 'location' are required"
 

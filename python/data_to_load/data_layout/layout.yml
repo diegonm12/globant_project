@@ -1,8 +1,8 @@
 
 departments: '(id integer, department VARCHAR(50))'
-hired_employees: '(id integer, name VARCHAR(125), datetime date, department_id int, job_id int)'
+hired_employees: '(id integer, name VARCHAR(125), datetime varchar(125), department_id int, job_id int)'
 jobs: '(id integer, job VARCHAR(50))'
 
-departments_insert: '(id, department)'
-hired_employees_insert: '(id, name, datetime, department_id, job_id)'
-jobs_insert: '(id, job)'
+departments_insert: '(id, department) values (%s, %s)'
+hired_employees_insert: '(id, name, datetime, department_id, job_id) values (%s, %s, %s, %s, %s)'
+jobs_insert: '(id, job) values (%s, %s)'
