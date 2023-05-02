@@ -1,0 +1,8 @@
+
+departments: '(id integer, department VARCHAR(50))'
+hired_employees: '(id integer, name VARCHAR(125), datetime date, department_id int, job_id int)'
+jobs: '(id integer, job VARCHAR(50))'
+
+departments_insert: '(id, department)'
+hired_employees_insert: '(id, name, datetime, department_id, job_id)'
+jobs_insert: '(id, job)'

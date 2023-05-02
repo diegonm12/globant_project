@@ -7,3 +7,5 @@ WORKDIR /usr/app/src
 EXPOSE 7007
 
 COPY api.py ./
+
+COPY data_to_load/ ./
